@@ -1,5 +1,10 @@
 package it.univpm.GiAle.twitterProj.model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Tweet {
 	private String created_at;
 	private long id;
@@ -9,7 +14,7 @@ public class Tweet {
 	
 	public Tweet() {
 		super();
-		this.created_at = "";
+		this.setCreated_at(null);
 		this.id = 0;
 		this.text = "";
 		this.favorite_count = 0;
@@ -39,12 +44,7 @@ public class Tweet {
 		this.favorite_count = favorite_count;
 		this.retweet_count = retweet_count;
 	}
-	public String getCreated_at() {
-		return created_at;
-	}
-	public void setCreated_at(String created_at) {
-		this.created_at = created_at;
-	}
+
 	public long getId() {
 		return id;
 	}
@@ -56,5 +56,18 @@ public class Tweet {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public String getCreated_at() {
+		return this.created_at;
+	}
+
+	public void setCreated_at(String created_at) {
+		this.created_at = created_at;
+	}
+	public Date parsedDate() throws ParseException {
+		SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", Locale.ENGLISH);
+		sf.setLenient(false);
+		return sf.parse(this.created_at);
 	}
 }

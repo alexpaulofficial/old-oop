@@ -1,10 +1,12 @@
 package it.univpm.GiAle.twitterProj.service;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -32,8 +34,8 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public Tweet[] addJson(String body) {
 		// TODO Auto-generated method stub
-		JsonObject gson = new Gson().fromJson(body, JsonObject.class);
-		JsonArray array = gson.getAsJsonArray("statuses"); 
+		JsonObject myObject = new Gson().fromJson(body, JsonObject.class);
+		JsonArray array = myObject.getAsJsonArray("statuses"); 
 		Gson GoogleSon = new Gson();
 		Tweet[] gsonArray = GoogleSon.fromJson(array, Tweet[].class);
 		return gsonArray;
