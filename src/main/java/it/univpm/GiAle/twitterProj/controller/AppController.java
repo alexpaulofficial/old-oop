@@ -60,15 +60,15 @@ public class AppController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping("/data/filter")
+	@PostMapping("/data/filter")
 	public ResponseEntity<Object> filter(@RequestBody String bodyFilter) {
 		
 		return new ResponseEntity<Object> (service.filtraggio(bodyFilter, service.getTweet()), HttpStatus.OK);
 	}
 
-	@GetMapping("/data/stats")
+	@PostMapping("/data/stats")
 	public ResponseEntity<Object> stats(@RequestBody String bodyFilter) {
-		return new ResponseEntity<Object> (Stats.stats(service.getTweet()), HttpStatus.OK);
+		return new ResponseEntity<Object> (Stats.stats(service.filtraggio(bodyFilter, service.getTweet())), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/metadata", method = RequestMethod.GET, produces = "application/json")
