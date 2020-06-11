@@ -45,7 +45,17 @@ public class TweetServiceImpl implements TweetService {
 	public Tweet[] addJson(String body) {
 		// TODO Auto-generated method stub
 		JsonObject myObject = new Gson().fromJson(body, JsonObject.class);
-		JsonArray array = myObject.getAsJsonArray("statuses"); 
+		JsonArray array = myObject.getAsJsonArray("statuses");
+		// serve per i retweet
+		for (int i = 0; i < array.size(); i++) {
+			if (array.get(i).getAsJsonObject().has("retweeted_status")) {
+				JsonObject obj = new JsonObject();
+				obj = array.get(i).getAsJsonObject();
+				obj.addProperty("retweet_count", array.get(i).getAsJsonObject().get("retweeted_status").getAsJsonObject().get("retweet_count").getAsBigInteger());
+				obj.addProperty("favorite_count", array.get(i).getAsJsonObject().get("retweeted_status").getAsJsonObject().get("favorite_count").getAsBigInteger());
+				array.set(i, obj);				
+			}
+		}
 		Gson GoogleSon = new Gson();
 		Tweet[] gsonArray = GoogleSon.fromJson(array, Tweet[].class);
 		return gsonArray;
@@ -70,6 +80,11 @@ public class TweetServiceImpl implements TweetService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		// serve per richiedere le statistiche su tutti i dati
+		if (filterFiled.equals("data"))
+		{
+			filteredList = list;
 		}
 		return filteredList;
 	}
