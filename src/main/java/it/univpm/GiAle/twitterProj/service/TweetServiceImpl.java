@@ -19,6 +19,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import it.univpm.GiAle.twitterProj.exception.WrongFilterException;
+import it.univpm.GiAle.twitterProj.exception.getTweetException;
 import it.univpm.GiAle.twitterProj.filters.Filter;
 import it.univpm.GiAle.twitterProj.model.Tweet;
 
@@ -26,10 +28,12 @@ import it.univpm.GiAle.twitterProj.model.Tweet;
 public class TweetServiceImpl implements TweetService {
 	private static ArrayList<Tweet> myTweetList = new ArrayList<Tweet>();
 	@Override
-	public ArrayList<Tweet> getTweet() {
+	public ArrayList<Tweet> getTweet() throws getTweetException{
 		// TODO Auto-generated method stub
+		if (myTweetList.isEmpty())
+			throw new getTweetException("La lista è vuota !");
 		return myTweetList;
-	}
+     }
 
 	@Override
 	public void addTweetsArray(Tweet[] tweetArray) {
@@ -61,19 +65,22 @@ public class TweetServiceImpl implements TweetService {
 		return gsonArray;
 	}
 	
-	public ArrayList<Tweet> filtraggio (String body, ArrayList<Tweet> list) {
+	public ArrayList<Tweet> filtraggio (String body, ArrayList<Tweet> list) throws WrongFilterException {
 		JsonObject gson = new Gson().fromJson(body, JsonObject.class);
 		String filterFiled = gson.get("filter_field").getAsString();
 		String filterType = gson.get("filter_type").getAsString();
 		JsonElement param = gson.get("parameters");
 		ArrayList<Tweet> filteredList = new ArrayList<Tweet>();
+		
+		if (!filterFiled.equals("likes") && !filterFiled.equals("retweets") && !filterFiled.equals("time") && !filterFiled.equals("data") ) 
+			throw new WrongFilterException("Il filtro inserito non è corretto!");
 		if (filterFiled.equals("likes")) {
 			filteredList = Filter.filterByLikes(list, filterType, param);
 		}
-		if (filterFiled.equals("retweets")) {
+		 if  (filterFiled.equals("retweets")) {
 			filteredList = Filter.filterByRetweet(list, filterType, param);
 		}
-		if (filterFiled.equals("time")) {
+		 if (filterFiled.equals("time")) {
 			try {
 				filteredList = Filter.filterByTime(list, filterType, param);
 			} catch (ParseException e) {
@@ -87,7 +94,8 @@ public class TweetServiceImpl implements TweetService {
 			filteredList = list;
 		}
 		return filteredList;
-	}
+		}
+		
 
 	@Override
 	public String GetFromTwitter(String url) throws MalformedURLException, IOException {

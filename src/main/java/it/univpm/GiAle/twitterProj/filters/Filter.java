@@ -9,10 +9,11 @@ import java.util.Locale;
 
 import com.google.gson.JsonElement;
 
+import it.univpm.GiAle.twitterProj.exception.WrongFilterException;
 import it.univpm.GiAle.twitterProj.model.Tweet;
 
 public class Filter {
-	public static ArrayList<Tweet> filterByLikes(ArrayList<Tweet> list, String filter, JsonElement param) {
+	public static ArrayList<Tweet> filterByLikes(ArrayList<Tweet> list, String filter, JsonElement param) throws WrongFilterException {
 		// TODO Auto-generated method stub
 		ArrayList<Tweet> listaFiltrata = new ArrayList<Tweet>();
 		for (int i = 0; i < list.size(); i++) {
@@ -28,10 +29,10 @@ public class Filter {
 			if (filter.equals("$lte") && list.get(i).getFavorite_count() <= param.getAsInt()) {
 				listaFiltrata.add(list.get(i));
 			}
-			if (filter.equals("$bt")) {
-				if (!param.isJsonArray()) {
+			if (filter.equals("$bt") ) {
+				if ( param.getAsJsonArray().size() != 2) {
 					// eccezione
-					return null;
+					throw new WrongFilterException("Filtro $bt errato, sono richiesti 2 valori");
 				} else {
 					if (list.get(i).getFavorite_count() >= param.getAsJsonArray().get(0).getAsInt()
 							&& list.get(i).getFavorite_count() <= param.getAsJsonArray().get(1).getAsInt())
@@ -43,7 +44,7 @@ public class Filter {
 		return listaFiltrata;
 	}
 
-	public static ArrayList<Tweet> filterByRetweet(ArrayList<Tweet> list, String filter, JsonElement param) {
+	public static ArrayList<Tweet> filterByRetweet(ArrayList<Tweet> list, String filter, JsonElement param) throws WrongFilterException {
 		// TODO Auto-generated method stub
 		ArrayList<Tweet> listaFiltrata = new ArrayList<Tweet>();
 		for (int i = 0; i < list.size(); i++) {
@@ -60,9 +61,9 @@ public class Filter {
 				listaFiltrata.add(list.get(i));
 			}
 			if (filter.equals("$bt")) {
-				if (!param.isJsonArray()) {
+				if (param.getAsJsonArray().size() != 2) {
 					// eccezione
-					return null;
+					throw new WrongFilterException("Filtro $bt errato, sono richiesti 2 valori");
 				} else {
 					if (list.get(i).getFavorite_count() >= param.getAsJsonArray().get(0).getAsInt()
 							&& list.get(i).getFavorite_count() <= param.getAsJsonArray().get(1).getAsInt())
@@ -76,7 +77,7 @@ public class Filter {
 	}
 
 	public static ArrayList<Tweet> filterByTime(ArrayList<Tweet> list, String filter, JsonElement param)
-			throws ParseException {
+			throws ParseException, WrongFilterException {
 		// TODO Auto-generated method stub
 		ArrayList<Tweet> listaFiltrata = new ArrayList<Tweet>();
 		SimpleDateFormat sf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss", Locale.ENGLISH);
@@ -115,9 +116,9 @@ public class Filter {
 		}
 		if (filter.equals("$bt")) {
 			for (int i = 0; i < list.size(); i++) {
-				if (!param.isJsonArray()) {
+				if (param.getAsJsonArray().size() != 2) {
 					// eccezione
-					return null;
+					throw new WrongFilterException("Filtro $bt errato, sono richiesti 2 valori");
 				} else {
 					Date dataFiltro1 = sf.parse(param.getAsJsonArray().get(0).getAsString());
 					Date dataFiltro2 = sf.parse(param.getAsJsonArray().get(1).getAsString());

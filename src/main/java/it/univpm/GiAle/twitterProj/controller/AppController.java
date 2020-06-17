@@ -28,6 +28,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import it.univpm.GiAle.twitterProj.exception.WrongFilterException;
+import it.univpm.GiAle.twitterProj.exception.getTweetException;
 import it.univpm.GiAle.twitterProj.filters.Filter;
 import it.univpm.GiAle.twitterProj.filters.Stats;
 import it.univpm.GiAle.twitterProj.model.Tweet;
@@ -39,12 +41,12 @@ public class AppController {
 	TweetService service;
 
 	@RequestMapping(value = "/data", method = RequestMethod.GET)
-	public ResponseEntity<Object> getTweet() {
+	public ResponseEntity<Object> getTweet() throws getTweetException {
 		return new ResponseEntity<>(service.getTweet(), HttpStatus.OK);
 	}
 
 	@PostMapping("/data")
-	public ResponseEntity<Object> postJSONBody(@RequestBody String body) {
+	public ResponseEntity<Object> postJSONBody(@RequestBody String body) throws getTweetException {
 
 		service.addTweetsArray(service.addJson(body));
 		return new ResponseEntity<>(
@@ -61,13 +63,13 @@ public class AppController {
 	}
 
 	@PostMapping("/data/filter")
-	public ResponseEntity<Object> filter(@RequestBody String bodyFilter) {
+	public ResponseEntity<Object> filter(@RequestBody String bodyFilter) throws getTweetException, WrongFilterException {
 		
-		return new ResponseEntity<Object> (service.filtraggio(bodyFilter, service.getTweet()), HttpStatus.OK);
+		return new ResponseEntity<Object> (service.filtraggio(bodyFilter, service.getTweet()), HttpStatus.OK) ;
 	}
 
 	@PostMapping("/data/stats")
-	public ResponseEntity<Object> stats(@RequestBody String bodyFilter) {
+	public ResponseEntity<Object> stats(@RequestBody String bodyFilter) throws getTweetException, WrongFilterException {
 		return new ResponseEntity<Object> (Stats.stats(service.filtraggio(bodyFilter, service.getTweet())), HttpStatus.OK);
 	}
 
